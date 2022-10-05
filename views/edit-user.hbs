@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактирование пользователя</title>
+    <meta charset="utf-8" />
+    <style>.field{width:180px;}</style>
+</head>
+<body>
+    <h1>Редактирование пользователя</h1>
+     <form action="{{this._id}}" method="post">
+        <input type="hidden" name="id" value="{{this._id}}" />
+        <label>Имя</label><br>
+        <input name="name" value="{{this.name}}"  class="field" /><br><br>
+        <label>Язык</label><br>
+        <input name="language" type="string" value="{{this.name}}" class="field" /><br><br>
+        <input type="submit" value="Отправить" />
+     </form>
+     <a href="/users">К списку пользователей</a>
+</body>
+<html>

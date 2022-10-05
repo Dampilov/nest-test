@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактирование языка</title>
+    <meta charset="utf-8" />
+    <style>.field{width:180px;}</style>
+</head>
+<body>
+    <h1>Редактирование языка</h1>
+     <form action="{{this._id}}" method="post">
+        <input type="hidden" name="id" value="{{this._id}}" />
+        <label>Название</label><br>
+        <input name="name" value="{{this.name}}"  class="field" /><br><br>
+        <input type="submit" value="Отправить" />
+     </form>
+     <a href="/languages">К списку языков</a>
+</body>
+<html>

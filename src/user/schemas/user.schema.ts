@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Language } from 'src/language/schemas/language.schema';
+import { Type } from 'class-transformer';
 
 export type UserDocument = User & Document;
 
@@ -8,8 +10,9 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop([String])
-  language: string[];
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: Language.name }])
+  @Type(() => Language)
+  language: Language;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

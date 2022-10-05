@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        {
+            box-sizing: border-box;
+        }
+        /* Set additional styling options for the columns*/
+        .column {
+        float: left;
+        width: 50%;
+        }
+    </style>
+    <title>Список пользователей</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <tr>
+        <div class="column">
+            <h1>Список языков</h1>
+            <p><a href="languages/create">Добавить язык</a></p>
+            <table>
+                <tr><th>Название</th><th></th></tr>
+                {{#each []}}
+                    <tr>
+                        <td>{{this.name}}</td>
+                        <td>
+                            <a href="languages/edit/{{this._id}}">Edit</a>|
+                            <form action="languages/delete/{{this._id}}" method="post" style="display:inline;">
+                                <input type="submit" value="Удалить" />
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </table>
+        </div>
+        <div class="column">
+            <h1>Список языков</h1>
+        </div>
+    </tr>
+</body>
+<html>
