@@ -12,7 +12,11 @@ export class User {
 
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: Language.name }])
   @Type(() => Language)
-  language: Language;
+  language: Language[];
+
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: User.name }])
+  @Type(() => User)
+  friends: User[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

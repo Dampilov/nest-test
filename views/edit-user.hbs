@@ -7,14 +7,22 @@
 </head>
 <body>
     <h1>Редактирование пользователя</h1>
-     <form action="{{this._id}}" method="post">
+     <form action="{{this._id}}" method="get">
         <input type="hidden" name="id" value="{{this._id}}" />
         <label>Имя</label><br>
         <input name="name" value="{{this.name}}"  class="field" /><br><br>
-        <label>Язык</label><br>
-        <input name="language" type="string" value="{{this.name}}" class="field" /><br><br>
-        <input type="submit" value="Отправить" />
+        <label>Языки</label>
+        {{#each this.language}}
+            <td>{{this.name}}</td>
+        {{/each}}
+        <br>
+        <input name="language"  class="field" /><br><br>
+        <input type="submit" value="Добавить" />
+        <form action="/users" method="get" style="display:inline;">
+            <input type="submit" value="Удалить" />
+        </form>
      </form>
+     
      <a href="/users">К списку пользователей</a>
 </body>
 <html>

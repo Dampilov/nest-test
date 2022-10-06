@@ -12,5 +12,6 @@ import { Language, LanguageSchema } from './schemas/language.schema';
   ],
   controllers: [LanguageController],
   providers: [LanguageService],
+  exports: [LanguageService],
 })
 export class LanguageModule {}

@@ -11,6 +11,7 @@ import {
   UserLanguage,
   UserLanguageDocument,
 } from './schemas/userLanguage.schema';
+import { Friends } from './schemas/friends.schema';
 
 @Injectable()
 export class UserService {
@@ -19,14 +20,10 @@ export class UserService {
     @InjectModel(Language.name) private languageModel: Model<LanguageDocument>,
     @InjectModel(UserLanguage.name)
     private userLanguageModel: Model<UserLanguageDocument>,
+    @InjectModel(Friends.name) private friendsModel: Model<LanguageDocument>,
   ) {}
 
   async create(createUserDto: UserDto): Promise<User> {
-    /* const languages = createUserDto.language.split(/[, ]+/);
-    languages.forEach((language) => {
-      languageModel.find({ name: language });
-    }); */
-
     let languageField = await this.languageModel.findOne({
       name: createUserDto.language,
     });
@@ -50,17 +47,16 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().populate('language').exec();
+    return await this.userModel.find().populate('language').exec();
   }
 
   async findOne(_id: string): Promise<User> {
-    return this.userModel.findById({ _id }).exec();
+    return this.userModel.findById({ _id }).populate('language').exec();
   }
 
   async updateOne(_id: string, updateUserDto: UserDto): Promise<User> {
     const user = {
       name: updateUserDto.name,
-      language: updateUserDto.language?.split(/[, ]+/),
     };
     return this.userModel
       .findByIdAndUpdate(_id, user)
@@ -69,5 +65,39 @@ export class UserService {
 
   async deleteOne(_id: string): Promise<User> {
     return this.userModel.findByIdAndDelete(_id);
+  }
+
+  async removeLanguage(_id: string, updateUserDto: UserDto): Promise<User> {
+    const user = await this.userModel.findById(_id).populate('language').exec();
+    const language = await this.languageModel.findOne({
+      name: updateUserDto.language,
+    });
+    await user.updateOne({ $pullAll: { language: [{ _id: language._id }] } });
+    user.save();
+    return await this.userLanguageModel.findOneAndDelete({
+      user: user,
+      language: language,
+    });
+  }
+
+  async add(_id: string, updateUserDto: UserDto): Promise<User> {
+    const user = await this.userModel.findById(_id);
+    let language = await this.languageModel.findOne({
+      name: updateUserDto?.language,
+    });
+    if (language == null) {
+      language = new this.languageModel({
+        name: updateUserDto.language,
+      });
+    }
+    const userLanguage = new this.userLanguageModel({
+      user: user,
+      language: language,
+    });
+    await this.friendsModel.create({ user:  });
+    user.language.push(language);
+    userLanguage.save();
+    language.save();
+    return user.save();
   }
 }

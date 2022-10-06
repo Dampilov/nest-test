@@ -18,8 +18,8 @@ export class UserController {
 
   @Get()
   //@Render('users')
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(): Promise<User[] | void> {
+    return await this.userService.findAll();
   }
 
   @Post('create')
@@ -40,13 +40,33 @@ export class UserController {
     @Res() res: Response,
   ) {
     this.userService.updateOne(id, updateUserDto);
-    res.status(302).redirect('/users');
+    res.status(302).redirect('/users/edit/' + id);
   }
 
   @Get('edit/:id')
-  @Render('edit-user')
+  //@Render('edit-user')
   async findOne(@Param('id') id: string): Promise<User> {
-    return this.userService.findOne(id);
+    return await this.userService.findOne(id);
+  }
+
+  @Post('edit/:id/remove')
+  async removeLanguageFromUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UserDto,
+    @Res() res: Response,
+  ) {
+    await this.userService.removeLanguage(id, updateUserDto);
+    res.status(302).redirect('/users/edit/' + id);
+  }
+
+  @Post('edit/:id/add')
+  async addLanguageFromUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UserDto,
+    @Res() res: Response,
+  ) {
+    await this.userService.add(id, updateUserDto);
+    res.status(302).redirect('/users/edit/' + id);
   }
 
   @Post('delete/:id')
