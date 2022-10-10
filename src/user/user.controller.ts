@@ -8,6 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { FriendDto } from './dto/friend.dtp';
 import { UserDto } from './dto/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
@@ -49,7 +50,7 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
-  @Post('edit/:id/remove')
+  @Post('edit/:id/language/remove')
   async removeLanguageFromUser(
     @Param('id') id: string,
     @Body() updateUserDto: UserDto,
@@ -59,14 +60,30 @@ export class UserController {
     res.status(302).redirect('/users/edit/' + id);
   }
 
-  @Post('edit/:id/add')
+  @Post('edit/:id/language/add')
   async addLanguageFromUser(
     @Param('id') id: string,
     @Body() updateUserDto: UserDto,
     @Res() res: Response,
   ) {
-    await this.userService.add(id, updateUserDto);
+    await this.userService.addLanguage(id, updateUserDto);
     res.status(302).redirect('/users/edit/' + id);
+  }
+
+  @Post('edit/:id/friends/add')
+  async addFriendToUser(
+    @Param('id') id: string,
+    @Body() addFriendDto: FriendDto,
+  ) {
+    return await this.userService.addFriend(id, addFriendDto);
+  }
+
+  @Post('edit/:id/friends/remove')
+  async removeFriendOfUser(
+    @Param('id') id: string,
+    @Body() removeFriendDto: FriendDto,
+  ) {
+    return await this.userService.removeFriend(id, removeFriendDto);
   }
 
   @Post('delete/:id')

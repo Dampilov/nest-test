@@ -4,7 +4,10 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User, UserSchema } from './schemas/user.schema';
 import { Language, LanguageSchema } from 'src/language/schemas/language.schema';
-import { UserLanguage, UserLanguageSchema } from './schemas/userLanguage.schema';
+import {
+  UserLanguage,
+  UserLanguageSchema,
+} from './schemas/userLanguage.schema';
 import { Friends, FriendsSchema } from './schemas/friends.schema';
 
 @Module({

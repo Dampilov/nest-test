@@ -1,0 +1,39 @@
+type User @key(fields: "id") {
+  id: ID! @external
+  name: String!
+  languages: [Language]
+  friendsId: [Int]
+  friends: [User]
+}
+
+extend type Language @key(fields: "id") {
+  id: ID!
+  name: String!
+  userId: [Int]!
+}
+
+extend type Query {
+  users: [User]
+  user(id: ID!): User
+  languages: [Language]
+  language(id: ID!): Language
+}
+
+extend type Mutation {
+  createUser(createUserInput: CreateUserInput): User
+  deleteUser(deleteUserInput: DeleteUserInput): User
+  updateUser(updateUserInput: UpdateUserInput): User
+}
+
+input CreateUserInput {
+  name: String
+}
+
+input DeleteUserInput {
+  id: Int
+}
+
+input UpdateUserInput {
+  id: Int
+  friendsId: [Int]
+}

@@ -12,6 +12,7 @@ import {
   UserLanguageDocument,
 } from './schemas/userLanguage.schema';
 import { Friends } from './schemas/friends.schema';
+import { FriendDto } from './dto/friend.dtp';
 
 @Injectable()
 export class UserService {
@@ -47,7 +48,11 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userModel.find().populate('language').exec();
+    return await this.userModel
+      .find()
+      .populate('language')
+      .populate('friends')
+      .exec();
   }
 
   async findOne(_id: string): Promise<User> {
@@ -80,7 +85,7 @@ export class UserService {
     });
   }
 
-  async add(_id: string, updateUserDto: UserDto): Promise<User> {
+  async addLanguage(_id: string, updateUserDto: UserDto): Promise<User> {
     const user = await this.userModel.findById(_id);
     let language = await this.languageModel.findOne({
       name: updateUserDto?.language,
@@ -94,10 +99,33 @@ export class UserService {
       user: user,
       language: language,
     });
-    await this.friendsModel.create({ user:  });
     user.language.push(language);
     userLanguage.save();
     language.save();
     return user.save();
+  }
+
+  async addFriend(_id: string, friendDto: FriendDto): Promise<User> {
+    const user = await this.userModel.findById(_id);
+    const friend = await this.userModel.findOne({ name: friendDto.friends });
+    if (user && friend) {
+      user.friends.push(friend);
+      user.save();
+      friend.friends.push(user);
+      friend.save();
+    }
+    return user.populate('friends');
+  }
+
+  async removeFriend(_id: string, friendDto: FriendDto): Promise<User> {
+    const user = await this.userModel.findById(_id);
+    const friend = await this.userModel.findOne({ name: friendDto.friends });
+    if (user && friend) {
+      await user.updateOne({ $pullAll: { friends: [{ _id: friend._id }] } });
+      user.save();
+      await friend.updateOne({ $pullAll: { friends: [{ _id: user._id }] } });
+      friend.save();
+    }
+    return user.populate('friends');
   }
 }
