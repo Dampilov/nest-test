@@ -1,47 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { User } from './users.interfaces';
+import { Inject, Injectable } from '@nestjs/common';
+import { User } from './schemas/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateUserInput } from './schemas/create-user.input';
+import { UpdateUserInput } from './schemas/update-user.input';
 
 @Injectable()
 export class UsersGraphqlService {
-  private users: User[] = [
-    { id: 1, name: 'Тимур', friendsId: [6, 2, 3] },
-    { id: 2, name: 'Каск', friendsId: [1, 6, 4] },
-    { id: 3, name: 'Тимур', friendsId: [4, 1, 5] },
-    { id: 4, name: 'Каск', friendsId: [2, 3] },
-    { id: 5, name: 'Тимур', friendsId: [3, 6] },
-    { id: 6, name: 'Каск', friendsId: [1, 2, 5] },
-  ];
 
-  create(user: User): User {
-    user.id = this.users.length + 1;
-    this.users.push(user);
-    return user;
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
+
+  async create(newUser: CreateUserInput): Promise<User> {
+    const user = this.userRepository.create(newUser);
+    return await this.userRepository.save(user);
   }
 
-  delete(userId: number): User {
-    const deletedUser = this.users.find((user) => user.id === userId);
-    const index = this.users.indexOf(deletedUser);
-    this.users.splice(index, 1);
-    return deletedUser;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  update(usersFriends: User): User {
-    return this.users.find((user) => {
-      if (user.id === usersFriends.id) user.friendsId = usersFriends.friendsId;
+  async findOne(id: number): Promise<User> {
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.userRepository.delete(id);
+  }
+
+  async update(
+    userId: number,
+    usersUpdate: UpdateUserInput,
+  ): Promise<User> {
+    const user = await this.userRepository.preload({
+      id: userId,
+      ...usersUpdate,
+    });
+    return this.userRepository.save(user);
+  }
+
+  async findUsersFriends(): Promise<User[]> {
+    return await this.userRepository.find({
+      relations: {
+        friends: true,
+      }
     });
   }
 
-  findByUserId(userId: number) {
-    return this.users.filter((user) => {
-      return user.friendsId.find((element) => element === Number(userId));
+  async findUsersLanguages(): Promise<User[]> {
+    return await this.userRepository.find({
+      relations: {
+        languages: true,
+      }
     });
-  }
-
-  findOne(userId: number) {
-    return this.users.find((user) => user.id === userId);
-  }
-
-  findAll() {
-    return this.users;
   }
 }

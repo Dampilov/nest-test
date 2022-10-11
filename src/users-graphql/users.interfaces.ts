@@ -1,9 +1,9 @@
 import { Language } from './language-graphql.interfaces';
 
 export interface User {
-  id?: number;
+  id: number;
   name: string;
   languages?: Language[];
-  friendsId: number[];
+  friendsId?: number[];
   friends?: User[];
 }

@@ -1,8 +1,7 @@
 import {
   Args,
-  ID,
+  Int,
   Mutation,
-  Parent,
   Query,
   ResolveField,
   Resolver,
@@ -23,7 +22,7 @@ export class UsersGraphqlResolver {
   ) {}
 
   @Query('user')
-  findUser(@Args({ name: 'id', type: () => ID }) id: number) {
+  findUser(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.userService.findOne(id);
   }
 
@@ -33,34 +32,32 @@ export class UsersGraphqlResolver {
   }
 
   @ResolveField('languages')
-  public languages(@Parent() user: User): any {
-    return this.languageService.findByUserId(user.id);
+  public languages(): any {
+    return this.userService.findUsersLanguages();
   }
 
   @ResolveField('friends')
-  public friends(@Parent() user: User): any {
-    return this.userService.findByUserId(user.id);
+  public friends(): any {
+    return this.userService.findUsersFriends();
   }
 
   // API
 
   @Mutation('createUser')
   async create(@Args('createUserInput') user: User) {
-    const createdUser = this.userService.create(user);
-    pubSub.publish('userCreated', { userCreated: createdUser });
-    return createdUser;
+    return this.userService.create(user);
   }
 
   @Mutation('deleteUser')
   async deleteOne(@Args('deleteUserInput') user: User) {
-    const deletedUser = this.userService.delete(user.id);
+    const deletedUser = this.userService.remove(user.id);
     pubSub.publish('userDeleted', { userDeleted: deletedUser });
     return deletedUser;
   }
 
   @Mutation('updateUser')
   async updateOne(@Args('updateUserInput') user: User) {
-    const updatedUser = this.userService.update(user);
+    const updatedUser = this.userService.update(user.id, user);
     pubSub.publish('userUpdated', { userUpdated: updatedUser });
     return updatedUser;
   }

@@ -8,6 +8,8 @@ import {
 } from '@nestjs/apollo';
 import { LanguageResolver } from './language-graphql.resolver';
 import { LanguageGraphqlService } from './language-graphql.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './schemas/user.entity';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { LanguageGraphqlService } from './language-graphql.service';
       driver: ApolloFederationDriver,
       typePaths: ['**/*.graphql'],
     }),
+    TypeOrmModule.forFeature([User])
   ],
   providers: [
     UsersGraphqlService,
