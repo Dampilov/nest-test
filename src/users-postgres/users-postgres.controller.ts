@@ -10,7 +10,7 @@ export class UsersPostgresController {
   constructor(private readonly userService: UsersPostgresService) {}
 
   @Get()
-  async findAll(): Promise<User[] | void> {
+  async findAll(): Promise<User[]> {
     return await this.userService.findAll();
   }
 

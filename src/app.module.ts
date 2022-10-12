@@ -24,6 +24,7 @@ import { UsersPostgresModule } from './users-postgres/users-postgres.module';
       database: 'nest',
       entities: [__dirname + '/../**/*.entity.js'],
       synchronize: true,
+      autoLoadEntities: true,
     }),
     UsersPostgresModule,
   ],

@@ -19,12 +19,8 @@ export class UsersPostgresService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find({
-      relations: {
-        friends: true,
-        languages: true,
-      },
-    });
+    console.log(await this.userRepository.find({}));
+    return await this.userRepository.find({});
   }
 
   async findOne(id: number): Promise<User> {
@@ -37,18 +33,18 @@ export class UsersPostgresService {
   }
 
   async remove(id: number): Promise<void> {
-    const users = (await this.findAll()).filter((user) => user.id != id);
     await this.userRepository.softDelete(id);
-    this.userRepository.save(users);
   }
 
   async update(userId: number, usersUpdate: UpdateUserInput): Promise<User> {
     console.log(usersUpdate);
     const updatedUser = await this.userRepository.findOneBy({ id: userId });
-    if (usersUpdate.name) updatedUser.name = usersUpdate.name;
-    if (usersUpdate.friends) updatedUser.friends = usersUpdate.friends;
-    if (usersUpdate.languages) updatedUser.languages = usersUpdate.languages;
-    return this.userRepository.save(updatedUser);
+    if (updatedUser) {
+      if (usersUpdate.name) updatedUser.name = usersUpdate.name;
+      if (usersUpdate.friends) updatedUser.friends = usersUpdate.friends;
+      if (usersUpdate.languages) updatedUser.languages = usersUpdate.languages;
+      return this.userRepository.save(updatedUser);
+    }
   }
 
   async findUsersFriends(): Promise<User[]> {

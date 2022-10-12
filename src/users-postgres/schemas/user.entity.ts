@@ -1,7 +1,13 @@
 import { Language } from './language.entity';
-import { Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+  DeleteDateColumn,
+  Column,
+} from 'typeorm';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column } from 'typeorm/decorator/columns/Column';
 
 @Entity()
 @ObjectType()
@@ -26,7 +32,7 @@ export class User {
   @JoinTable()
   languages: Language[];
 
-  @ManyToMany(() => User, (user) => user.friends)
+  @ManyToMany(() => User)
   @JoinTable()
   friends: User[];
 }
