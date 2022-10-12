@@ -32,14 +32,14 @@ export class UsersGraphqlResolver {
     return this.userService.findAll();
   }
 
-  @ResolveField('languages')
-  public languages(@Parent() user: User): any {
-    return this.languageService.findByUserId(user.id);
+  @ResolveField()
+  languages(@Parent() user: User): any {
+    return this.userService.findLanguages(user);
   }
 
-  @ResolveField('friends')
-  public friends(@Parent() user: User): any {
-    return this.userService.findByUserId(user.id);
+  @ResolveField()
+  friends(@Parent() user: User): any {
+    return this.userService.findFriends(user.id);
   }
 
   // API
@@ -62,6 +62,7 @@ export class UsersGraphqlResolver {
   async updateOne(@Args('updateUserInput') user: User) {
     const updatedUser = this.userService.update(user);
     pubSub.publish('userUpdated', { userUpdated: updatedUser });
+    this.friends(user);
     return updatedUser;
   }
 
